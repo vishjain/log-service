@@ -46,8 +46,7 @@ func (s *LogScanner) ReadMore() {
 	}
 }
 
-// GetLine tries to read enough bytes into buffer and then get the last line
-// based on the location of the last new line character. It is meant to be
+// GetLine returns the next line string in the file. It is meant to be
 // successively called to get the next line.
 func (s *LogScanner) GetLine() (line string, start int, err error) {
 	if s.err != nil {
