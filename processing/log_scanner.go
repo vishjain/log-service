@@ -5,11 +5,17 @@ import (
 	"io"
 )
 
+// LogScanner is used to read from the end of the file. Handles
+// internal details of reading the file.
 type LogScanner struct {
 	r   io.ReaderAt
+	// pos represents the file pointer position to do file reading.
 	pos int
+	// err is the error after a file operations.
 	err error
+	// buf contains the bytes just read from file.
 	buf []byte
+	// blockSizeRead is the amount you read from file at one time.
 	blockSizeRead int
 }
 
@@ -17,6 +23,7 @@ func NewLogScanner(r io.ReaderAt, pos int, blockSizeRead int) *LogScanner {
 	return &LogScanner{r: r, pos: pos, blockSizeRead: blockSizeRead}
 }
 
+// ReadMore is called to read more bytes from file into buffer if possible.
 func (s *LogScanner) ReadMore() {
 	// Check if we have reached the beginning of the file.
 	if s.pos == 0 {
@@ -39,6 +46,9 @@ func (s *LogScanner) ReadMore() {
 	}
 }
 
+// GetLine tries to read enough bytes into buffer and then get the last line
+// based on the location of the last new line character. It is meant to be
+// successively called to get the next line.
 func (s *LogScanner) GetLine() (line string, start int, err error) {
 	if s.err != nil {
 		return "", 0, s.err
