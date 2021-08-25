@@ -10,13 +10,13 @@ import (
 func TestShortMultilineScan(t *testing.T) {
 	const srcFileStr =
 		`Line1
-Line2
+Line2 Second Word
 Line3
-Line4
+Line4 Fourth Word
 End`
 
-	lineArr := []string{"End", "Line4", "Line3", "Line2", "Line1"}
-	posArr := []int{24, 18, 12, 6, 0}
+	lineArr := []string{"End", "Line4 Fourth Word", "Line3", "Line2 Second Word", "Line1"}
+	posArr := []int{48, 30, 24, 6, 0}
 	var lineScanned []string
 	var posScanned []int
 	scanner := NewLogScanner(strings.NewReader(srcFileStr), len(srcFileStr), 5)
