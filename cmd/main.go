@@ -83,6 +83,8 @@ func parseAndValidateQueryValues(r *http.Request) (*processing.QueryParams, erro
 	}, nil
 }
 
+// handleLogQuery is responsible for taking the relevant http request, validating it,
+// kicking off the file reading, and sending the lines in the file to the client.
 func handleLogQuery(s Subscriber, fileManager *processing.FileManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
