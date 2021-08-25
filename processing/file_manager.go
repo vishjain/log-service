@@ -59,8 +59,43 @@ func (fm *FileManager) ProcessLogQuery(c chan *FileBlockReadInfo, queryParams *Q
 }
 
 
-func (fm *FileManager) processWholeFile(fileProcessor *FileProcessor, logScanner *LogScanner, c chan *FileBlockReadInfo, queryParams *QueryParams) {
-	return
+func (fm *FileManager) processWholeFile(fileProcessor *FileProcessor, logScanner *LogScanner,
+	c chan *FileBlockReadInfo, queryParams *QueryParams) {
+
+	filter := &FileFilter {
+		noFilter: queryParams.IncludeFilterStr == "",
+		includeString: queryParams.IncludeFilterStr,
+	}
+
+	for {
+		resp, err := fileProcessor.RetrieveNextFileEvents(logScanner, filter, &RetrieveParams{
+			maxLinesToRetrieve:fm.maxLinesToRetrieve,
+		})
+		if err != nil {
+			fmt.Printf("processWholeFile Error: %v \n", err)
+			c <- &FileBlockReadInfo{
+				Err: err,
+			}
+			return
+		}
+
+		// Send block of lines read to server.
+		c <- &FileBlockReadInfo{
+			FileBlockRead:          resp.lineList,
+			FileProcessingFinished: false,
+			Err:                    nil,
+		}
+
+		// If the file has reached end of file, send to server.
+		if resp.eof {
+			fmt.Printf("End of file, processing complete. \n")
+			c <- &FileBlockReadInfo{
+				FileBlockRead:          nil,
+				FileProcessingFinished: true,
+				Err:                    nil,
+			}
+		}
+	}
 }
 
 func (fm *FileManager) processLastNEvents(fileProcessor *FileProcessor, logScanner *LogScanner,

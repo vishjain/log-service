@@ -12,16 +12,6 @@ import (
 func main() {
 	nc := NewNotificationCenter()
 
-	//go func() {
-	//	for {
-	//		b := []byte(time.Now().Format(time.RFC3339))
-	//		if err := nc.Notify(b); err != nil {
-	//			log.Fatal(err)
-	//		}
-	//
-	//		time.Sleep(1 * time.Second)
-	//	}
-	//}()
 	fileManager := processing.NewFileManager(5)
 	http.HandleFunc("/query", handleLogQuery(nc, fileManager))
 	http.ListenAndServe(":8001", nil)
@@ -138,7 +128,7 @@ func handleLogQuery(s Subscriber, fileManager *processing.FileManager) http.Hand
 
 				// Write all lines read & flush.
 				for _, line := range fileBlockReadInfo.FileBlockRead {
-					_, err := fmt.Fprintf(w, "%s \n", line)
+					_, err := fmt.Fprintf(w, "%s\n", line)
 					if err != nil {
 						http.Error(w, err.Error(), http.StatusInternalServerError)
 						return
