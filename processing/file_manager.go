@@ -19,7 +19,8 @@ func NewFileManager(maxLinesToRetrieve int) *FileManager {
 	}
 }
 
-// QueryParams holds information with the query parameters.
+// QueryParams holds information with the query parameters for the
+// Get Request.
 type QueryParams struct {
 	FileName string
 	LastNEvents int
@@ -38,8 +39,8 @@ type FileBlockReadInfo struct {
 	Err error
 }
 
-// ProcessLogQuery takes the query request and sends the relevant lines read in the file
-// to the http function handler (via a channel).
+// ProcessLogQuery takes the query request and sends the relevant lines read to the http
+// function handler (via a channel).
 func (fm *FileManager) ProcessLogQuery(c chan *FileBlockReadInfo, queryParams *QueryParams) {
 	// Check if the file exists in map.
 	var fileProcessor *FileProcessor
