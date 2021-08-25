@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// FileProcessor struct holds information to perform file operations
+// FileProcessor holds information to perform file operations
 // and to retrieve subsequent lines/data from the file.
 type FileProcessor struct {
 	file *os.File

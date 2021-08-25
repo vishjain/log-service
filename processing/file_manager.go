@@ -4,11 +4,13 @@ import (
 	"fmt"
 )
 
+// FileManager is used to process query from the client.
 type FileManager struct {
+	// fileToFileProcessor maps the file path name to the
+	// file processor.
 	fileToFileProcessor map[string]*FileProcessor
 	maxLinesToRetrieve int
 }
-
 
 func NewFileManager(maxLinesToRetrieve int) *FileManager {
 	return &FileManager{
@@ -17,18 +19,27 @@ func NewFileManager(maxLinesToRetrieve int) *FileManager {
 	}
 }
 
+// QueryParams holds information with the query parameters.
 type QueryParams struct {
 	FileName string
 	LastNEvents int
 	IncludeFilterStr string
 }
 
+// FileBlockReadInfo holds information about the lines
+// just read from the file to be returned to the client.
 type FileBlockReadInfo struct {
+	// FileBlockRead holds the lines that were just read
+	// from the file.
 	FileBlockRead []string
 	FileProcessingFinished bool
+	// Err holds any error that occurred while processing
+	// file.
 	Err error
 }
 
+// ProcessLogQuery takes the query request and sends the relevant lines read in the file
+// to the http function handler (via a channel).
 func (fm *FileManager) ProcessLogQuery(c chan *FileBlockReadInfo, queryParams *QueryParams) {
 	// Check if the file exists in map.
 	var fileProcessor *FileProcessor
@@ -37,6 +48,7 @@ func (fm *FileManager) ProcessLogQuery(c chan *FileBlockReadInfo, queryParams *Q
 	fileProcessor, ok = fm.fileToFileProcessor[queryParams.FileName]
 	if !ok {
 		fileProcessor = NewFileProcessor(queryParams.FileName)
+		fm.fileToFileProcessor[queryParams.FileName] = fileProcessor
 	}
 
 	// Open File & Call File Stat.
@@ -58,7 +70,8 @@ func (fm *FileManager) ProcessLogQuery(c chan *FileBlockReadInfo, queryParams *Q
 
 }
 
-
+// processWholeFile is a helper function which block by block sends read lines of a whole file
+// over to the http server code. Applies relevant filters.
 func (fm *FileManager) processWholeFile(fileProcessor *FileProcessor, logScanner *LogScanner,
 	c chan *FileBlockReadInfo, queryParams *QueryParams) {
 
@@ -98,6 +111,7 @@ func (fm *FileManager) processWholeFile(fileProcessor *FileProcessor, logScanner
 	}
 }
 
+// processLastNEvents only sends the last n events over to the server handler code.
 func (fm *FileManager) processLastNEvents(fileProcessor *FileProcessor, logScanner *LogScanner,
 	c chan *FileBlockReadInfo, queryParams *QueryParams) {
 
