@@ -40,7 +40,7 @@ func (fm *FileManager) ProcessLogQuery(c chan *FileBlockReadInfo, queryParams *Q
 	}
 
 	// Open File & Call File Stat.
-	file, fileInfo, err := fileProcessor.OpenFileAndStat()
+	file, fileInfo, err := fileProcessor.OpenFileAndStat("/var/log/")
 	if err != nil {
 		fmt.Printf("File Processor Error: %v \n", err)
 		c <- &FileBlockReadInfo{

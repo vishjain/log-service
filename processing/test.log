@@ -1,0 +1,19 @@
+Tue Aug 24 21:01:27.098 [00000000] 00 00 00 00 00 00
+Tue Aug 24 21:01:27.098 <kernel> GTK:
+Tue Aug 24 21:01:27.098 [00000000] 7C 64 37 64 06 7D FB 02 EB 7E 7B 82 71 AA A7 22
+Tue Aug 24 21:01:27.098 <kernel> installGTK: GTK installed
+Tue Aug 24 21:01:27.155 <airportd[148]> ERROR: sharingd (421) is not entitled for com.apple.wifi.join_history, will not allow request
+Tue Aug 24 21:01:27.164 <airportd[148]> _processIPv4Changes: ARP/NDP offloads disabled, not programming the offload
+Tue Aug 24 21:01:27.195 <airportd[148]> _processIPv4Changes: ARP/NDP offloads disabled, not programming the offload
+Tue Aug 24 21:01:28.270 <airportd[148]> ERROR: sharingd (421) is not entitled for com.apple.wifi.join_history, will not allow request
+Tue Aug 24 21:01:29.624 <airportd[148]> ERROR: sharingd (421) is not entitled for com.apple.wifi.join_history, will not allow request
+Tue Aug 24 21:01:30.076 <airportd[148]> ERROR: sharingd (421) is not entitled for com.apple.wifi.join_history, will not allow request
+Tue Aug 24 21:01:30.745 <airportd[148]> ERROR: rapportd (381) is not entitled for com.apple.wifi.join_history, will not allow request
+Tue Aug 24 21:01:30.759 <airportd[148]> ERROR: rapportd (381) is not entitled for com.apple.wifi.join_history, will not allow request
+Tue Aug 24 21:01:30.767 <airportd[148]> ERROR: rapportd (381) is not entitled for com.apple.wifi.join_history, will not allow request
+Tue Aug 24 21:01:31.499 <airportd[148]> ERROR: rapportd (381) is not entitled for com.apple.wifi.join_history, will not allow request
+Tue Aug 24 21:01:31.509 <airportd[148]> ERROR: rapportd (381) is not entitled for com.apple.wifi.join_history, will not allow request
+Tue Aug 24 21:01:31.521 <airportd[148]> ERROR: rapportd (381) is not entitled for com.apple.wifi.join_history, will not allow request
+Tue Aug 24 21:01:31.643 <airportd[148]> ERROR: rapportd (381) is not entitled for com.apple.wifi.join_history, will not allow request
+Tue Aug 24 21:01:31.787 <airportd[148]> ERROR: rapportd (381) is not entitled for com.apple.wifi.join_history, will not allow request
+Tue Aug 24 21:01:31.797 <airportd[148]> ERROR: rapportd (381) is not entitled for com.apple.wifi.join_history, will not allow request

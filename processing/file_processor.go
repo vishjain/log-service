@@ -36,8 +36,8 @@ func NewFileProcessor(fileName string) *FileProcessor {
 	}
 }
 
-func (fp *FileProcessor) OpenFileAndStat() (*os.File, os.FileInfo, error) {
-	file, err := os.Open("/var/log/" + fp.fileName)
+func (fp *FileProcessor) OpenFileAndStat(baseDir string) (*os.File, os.FileInfo, error) {
+	file, err := os.Open(baseDir + fp.fileName)
 	if err != nil {
 		return nil, nil, err
 	}
