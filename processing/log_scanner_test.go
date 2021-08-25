@@ -7,6 +7,10 @@ import (
 	"testing"
 )
 
+// TestShortMultilineScan is a unit test which tests the Log Scanner over a
+// basic multi-line input. You read small blocks of bytes at a time and check
+// that the correct order of words were read and that the Seek is moving the file
+// pointer to the right parts of the file.
 func TestShortMultilineScan(t *testing.T) {
 	const srcFileStr =
 		`Line1
