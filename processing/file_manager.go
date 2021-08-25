@@ -59,6 +59,7 @@ func (fm *FileManager) ProcessLogQuery(c chan *FileBlockReadInfo, queryParams *Q
 		c <- &FileBlockReadInfo{
 			Err: err,
 		}
+		return
 	}
 	defer fileProcessor.FileClose()
 
