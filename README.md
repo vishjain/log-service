@@ -42,17 +42,17 @@ The main goroutine then writes/flushes those lines to the client & goes back to
 listening for any more lines/errors. The side goroutine reading from the 
 log file sends a configurable block of lines to the main goroutine 
 (specified as maxLinesToRetrieve in the file manager). This was done for a 
-few reasons: 
-1) I originally wanted to render query results in a custom-built UI. 
+few reasons:
+1) I felt there could be a performance hit (need to verify this experimentally)
+if the main goroutines writes just one line, flushes it, and has to listen
+to another line for larger files.  
+2) I originally wanted to render query results in a custom-built UI. 
 For the client, rendering  many lines would be easier if you had a 
 block of lines instead of listening for a new line/event nonstop.
-2) Probably need websockets/dual-communication for the stretch challenge 
+3) Probably need websockets/dual-communication for the stretch challenge 
 (multiple nodes). This mechanism makes it easier to transition into that.
-3) Browsers can have limits/restrictions and this mechanism makes it easier
+4) Browsers can have limits/restrictions and this mechanism makes it easier
 to deal with such challenges. 
-4) I felt there would be a performance hit (need to verify this experimentally)
-if the main goroutines writes just one line, flushes it, and has to listen
-to another line for larger files. 
 
 
 ## Testing
@@ -70,7 +70,7 @@ time permitted. The unit test in file_processor_test.go uses a small
 test log file (test.log).
 
 ## Further Optimizations
-I would have implemented more optimizations had I had more time. We could
+I would have implemented more optimizations if I had more time. We could
 implement all sorts of caching mechanisms to improve query speed. Here a
 few:
 1) Cache recent 100-200 lines of a recently queried file.
