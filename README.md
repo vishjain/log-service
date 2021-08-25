@@ -15,9 +15,9 @@ to the server. I used Golang for this project.
 
 ## Structure of Project & Basic Design
 
-Given that the server might have to send over a whole large log line, the 
+Given that the server might have to send over a whole large log file, the 
 server listens for a connection from a client. Once it receives the REST request, 
-it sends the log lines over as a server side event. Once the server is ready to 
+it sends the log lines over as SSE (server side events). Once the server is ready to 
 send over relevant log lines, it will emit an event. I felt polling would create
 too much overhead on the server if the log file as large.
 
@@ -29,7 +29,7 @@ The main goroutine will have a channel that listens for any new lines read.
 Another goroutine is responsible for executing the reading logic and sending 
 the lines/events read chunk by chunk.
 
-The log scanner file has the underlying implementation read a file line by line.
+The log scanner file has the underlying implementation to read a file line by line.
 It tracks how much has been read and the file pointer position. The log scanner file
 reads the file in larger chunks (configured to 4096 bytes). Then you do a basic
 character search for the new line character to get the last line. The larger reads
@@ -44,16 +44,16 @@ log file sends a configurable block of lines to the main goroutine
 (specified as maxLinesToRetrieve in the file manager). This was done for a 
 few reasons:
 1) I felt there could be a performance hit (need to verify this experimentally)
-if the main goroutines writes just one line, flushes it, and has to listen
-to another line for larger files.  
+if the main goroutine writes just one line, flushes it, and has to listen
+for another line for larger files.  
 2) I originally wanted to render query results in a custom-built UI. 
-For the client, rendering  many lines would be easier if you had a 
-block of lines instead of listening for a new line/event nonstop.
+For the client, working with a few lines would be easier than 
+listening for a new line/event repeatedly.
 3) Probably need websockets/dual-communication for the stretch challenge 
-(multiple nodes). This mechanism makes it easier to transition into that.
+(master node, multiple nodes). This mechanism makes it easier to transition 
+into that. You have finer grained control over how many events you want.
 4) Browsers can have limits/restrictions and this mechanism makes it easier
 to deal with such challenges. 
-
 
 ## Testing
 You can run: go run ./cmd/main.go if you have go set up. 
