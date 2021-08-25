@@ -170,17 +170,3 @@ func (nc *NotificationCenter) Subscribe(c chan *processing.FileBlockReadInfo) (U
 
 	return unsubscribeFn, nil
 }
-
-//func (nc *NotificationCenter) Notify(b []byte) error {
-//	nc.subscribersMu.Lock()
-//	defer nc.subscribersMu.Unlock()
-//
-//	for c := range nc.subscribers {
-//		select {
-//		case c <- b:
-//		default:
-//		}
-//	}
-//
-//	return nil
-//}
