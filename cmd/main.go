@@ -13,6 +13,9 @@ func main() {
 	nc := NewNotificationCenter()
 
 	fileManager := processing.NewFileManager(5)
+
+	// Listen and send events (blocks of read lines) to client via
+	// invoking the handleLogQuery function.
 	http.HandleFunc("/query", handleLogQuery(nc, fileManager))
 	http.ListenAndServe(":8001", nil)
 }
@@ -24,7 +27,8 @@ type Subscriber interface {
 }
 
 
-
+// parseAndValidateQueryValues checks that the query parameters in the GET request from the user
+// are valid.
 func parseAndValidateQueryValues(r *http.Request) (*processing.QueryParams, error) {
 	values := r.URL.Query()
 	var fileName string
@@ -88,7 +92,6 @@ func handleLogQuery(s Subscriber, fileManager *processing.FileManager) http.Hand
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		fmt.Printf("Query params %+v \n", *queryParams)
 
 		// Subscribe channel.
 		c := make(chan *processing.FileBlockReadInfo)
@@ -98,6 +101,8 @@ func handleLogQuery(s Subscriber, fileManager *processing.FileManager) http.Hand
 			return
 		}
 
+		// Spawn a goroutine to take the query parameters provided by client
+		// and send block-by-block lines over the stream to the client.
 		go func() {
 			fileManager.ProcessLogQuery(c, queryParams)
 		}()
@@ -118,6 +123,8 @@ func handleLogQuery(s Subscriber, fileManager *processing.FileManager) http.Hand
 				}
 
 			default:
+				// Receive a block of read lines over a channel. Do some error check
+				// before sending to client with http response writer.
 				fileBlockReadInfo := <-c
 
 				// Error out if there has been an error.
