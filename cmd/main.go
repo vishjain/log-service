@@ -6,26 +6,16 @@ import (
 	processing "github.com/vishjain/log-service/processing"
 	"net/http"
 	"strconv"
-	"sync"
 )
 
 func main() {
-	nc := NewNotificationCenter()
-
 	fileManager := processing.NewFileManager(100)
 
 	// Listen and send events (blocks of read lines) to client via
 	// invoking the handleLogQuery function.
-	http.HandleFunc("/query", handleLogQuery(nc, fileManager))
+	http.HandleFunc("/query", handleLogQuery(fileManager))
 	http.ListenAndServe(":8001", nil)
 }
-
-type UnsubscribeFunc func() error
-
-type Subscriber interface {
-	Subscribe(c chan *processing.FileBlockReadInfo) (UnsubscribeFunc, error)
-}
-
 
 // parseAndValidateQueryValues checks that the query parameters in the GET request from the user
 // are valid.
@@ -85,7 +75,7 @@ func parseAndValidateQueryValues(r *http.Request) (*processing.QueryParams, erro
 
 // handleLogQuery is responsible for taking the relevant http request, validating it,
 // kicking off the file reading, and sending the lines in the file to the client.
-func handleLogQuery(s Subscriber, fileManager *processing.FileManager) http.HandlerFunc {
+func handleLogQuery(fileManager *processing.FileManager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// Quick check on the input of the http request.
@@ -97,11 +87,6 @@ func handleLogQuery(s Subscriber, fileManager *processing.FileManager) http.Hand
 
 		// Subscribe channel.
 		c := make(chan *processing.FileBlockReadInfo)
-		unsubscribeFn, err := s.Subscribe(c)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
 
 		// Spawn a goroutine to take the query parameters provided by client
 		// and send block-by-block lines over the stream to the client.
@@ -119,11 +104,7 @@ func handleLogQuery(s Subscriber, fileManager *processing.FileManager) http.Hand
 		for {
 			select {
 			case <-r.Context().Done():
-				if err := unsubscribeFn(); err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-					return
-				}
-
+				return
 			default:
 				// Receive a block of read lines over a channel. Do some error check
 				// before sending to client with http response writer.
@@ -150,32 +131,4 @@ func handleLogQuery(s Subscriber, fileManager *processing.FileManager) http.Hand
 			}
 		}
 	}
-}
-
-type NotificationCenter struct {
-	subscribers   map[chan *processing.FileBlockReadInfo]struct{}
-	subscribersMu *sync.Mutex
-}
-
-func NewNotificationCenter() *NotificationCenter {
-	return &NotificationCenter{
-		subscribers:   map[chan *processing.FileBlockReadInfo]struct{}{},
-		subscribersMu: &sync.Mutex{},
-	}
-}
-
-func (nc *NotificationCenter) Subscribe(c chan *processing.FileBlockReadInfo) (UnsubscribeFunc, error) {
-	nc.subscribersMu.Lock()
-	nc.subscribers[c] = struct{}{}
-	nc.subscribersMu.Unlock()
-
-	unsubscribeFn := func() error {
-		nc.subscribersMu.Lock()
-		delete(nc.subscribers, c)
-		nc.subscribersMu.Unlock()
-
-		return nil
-	}
-
-	return unsubscribeFn, nil
 }

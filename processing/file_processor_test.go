@@ -24,7 +24,7 @@ func TestLastNEvents(t *testing.T) {
 
 	// Instantiate log scanner. We want to only count events that have the word
 	// kernel.
-	scanner := NewLogScanner(file, int(fileInfo.Size()) - 1, 2048)
+	scanner := NewLogScanner(file, fileInfo.Size() - 1, 2048)
 	filter := &FileFilter{
 		noFilter: false,
 		includeString: "kernel",
