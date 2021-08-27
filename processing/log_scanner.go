@@ -10,16 +10,16 @@ import (
 type LogScanner struct {
 	r   io.ReaderAt
 	// pos represents the file pointer position to do file reading.
-	pos int
+	pos int64
 	// err is the error after a file operations.
 	err error
 	// buf contains the bytes just read from file.
 	buf []byte
 	// blockSizeRead is the amount you read from file at one time.
-	blockSizeRead int
+	blockSizeRead int64
 }
 
-func NewLogScanner(r io.ReaderAt, pos int, blockSizeRead int) *LogScanner {
+func NewLogScanner(r io.ReaderAt, pos int64, blockSizeRead int64) *LogScanner {
 	return &LogScanner{r: r, pos: pos, blockSizeRead: blockSizeRead}
 }
 
@@ -38,9 +38,9 @@ func (s *LogScanner) ReadMore() {
 		sizeToRead = s.pos
 	}
 	s.pos -= sizeToRead
-	readBuffer := make([]byte, sizeToRead, sizeToRead + len(s.buf))
+	readBuffer := make([]byte, sizeToRead, sizeToRead + int64(len(s.buf)))
 
-	_, s.err = s.r.ReadAt(readBuffer, int64(s.pos))
+	_, s.err = s.r.ReadAt(readBuffer, s.pos)
 	if s.err == nil {
 		s.buf = append(readBuffer, s.buf...)
 	}
@@ -48,7 +48,7 @@ func (s *LogScanner) ReadMore() {
 
 // GetLine returns the next line string in the file. It is meant to be
 // successively called to get the next line.
-func (s *LogScanner) GetLine() (line string, start int, err error) {
+func (s *LogScanner) GetLine() (line string, start int64, err error) {
 	if s.err != nil {
 		return "", 0, s.err
 	}
@@ -59,7 +59,7 @@ func (s *LogScanner) GetLine() (line string, start int, err error) {
 		lineBeginIdx := bytes.LastIndexByte(s.buf, '\n')
 		if lineBeginIdx >= 0 {
 			line, s.buf = string(s.buf[lineBeginIdx+1:]), s.buf[:lineBeginIdx]
-			return line, s.pos + lineBeginIdx + 1, nil
+			return line, s.pos + int64(lineBeginIdx) + 1, nil
 		}
 
 		// If there is no new line character, we need to read more.

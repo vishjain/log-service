@@ -12,7 +12,7 @@ import (
 func main() {
 	nc := NewNotificationCenter()
 
-	fileManager := processing.NewFileManager(5)
+	fileManager := processing.NewFileManager(100)
 
 	// Listen and send events (blocks of read lines) to client via
 	// invoking the handleLogQuery function.

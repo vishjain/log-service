@@ -63,7 +63,7 @@ func (fm *FileManager) ProcessLogQuery(c chan *FileBlockReadInfo, queryParams *Q
 	}
 	defer fileProcessor.FileClose()
 
-	logScanner := NewLogScanner(file, int(fileInfo.Size()) - 1, 4096)
+	logScanner := NewLogScanner(file, fileInfo.Size() - 1, 4096 * 16)
 	if queryParams.LastNEvents > 0 {
 		fm.processLastNEvents(fileProcessor, logScanner, c, queryParams)
 	} else {
