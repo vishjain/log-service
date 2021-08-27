@@ -8,8 +8,13 @@ import (
 	"strconv"
 )
 
+const (
+	// maxLinesToRetrieve is the # of lines that are written & flushed in 1 batch.
+	maxLinesToRetrieve = 100
+)
+
 func main() {
-	fileManager := processing.NewFileManager(100)
+	fileManager := processing.NewFileManager(maxLinesToRetrieve)
 
 	// Listen and send events (blocks of read lines) to client via
 	// invoking the handleLogQuery function.

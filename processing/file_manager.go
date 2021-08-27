@@ -39,6 +39,11 @@ type FileBlockReadInfo struct {
 	Err error
 }
 
+const (
+	// blockSizeRead specifies how many bytes to retrieve in 1 file read call.
+	blockSizeRead = 4096 * 16
+)
+
 // ProcessLogQuery takes the query request and sends the relevant lines read to the http
 // function handler (via a channel).
 func (fm *FileManager) ProcessLogQuery(c chan *FileBlockReadInfo, queryParams *QueryParams) {
@@ -63,7 +68,7 @@ func (fm *FileManager) ProcessLogQuery(c chan *FileBlockReadInfo, queryParams *Q
 	}
 	defer fileProcessor.FileClose()
 
-	logScanner := NewLogScanner(file, fileInfo.Size() - 1, 4096 * 16)
+	logScanner := NewLogScanner(file, fileInfo.Size() - 1, blockSizeRead)
 	if queryParams.LastNEvents > 0 {
 		fm.processLastNEvents(fileProcessor, logScanner, c, queryParams)
 	} else {
