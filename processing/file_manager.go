@@ -42,6 +42,8 @@ type FileBlockReadInfo struct {
 const (
 	// blockSizeRead specifies how many bytes to retrieve in 1 file read call.
 	blockSizeRead = 4096 * 16
+	// directoryLocation is where we need to look for log files.
+	directoryLocation = "/var/log/"
 )
 
 // ProcessLogQuery takes the query request and sends the relevant lines read to the http
@@ -58,7 +60,7 @@ func (fm *FileManager) ProcessLogQuery(c chan *FileBlockReadInfo, queryParams *Q
 	}
 
 	// Open File & Call File Stat.
-	file, fileInfo, err := fileProcessor.OpenFileAndStat("/var/log/")
+	file, fileInfo, err := fileProcessor.OpenFileAndStat(directoryLocation)
 	if err != nil {
 		fmt.Printf("File Processor Error: %v \n", err)
 		c <- &FileBlockReadInfo{
