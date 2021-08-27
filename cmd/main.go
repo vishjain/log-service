@@ -10,7 +10,7 @@ import (
 
 const (
 	// maxLinesToRetrieve is the # of lines that are written & flushed in 1 batch.
-	maxLinesToRetrieve = 100
+	maxLinesToRetrieve = 320
 )
 
 func main() {
